@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Contact — Cubic Hub</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function(){
+      // Replace with your EmailJS public key
+      emailjs.init("YOUR_EMAILJS_PUBLIC_KEY");
+    })();
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">Cubic Hub</div>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="prices.html">Prices</a>
+      <a href="craft.html">Craft</a>
+      <a href="selling.html">Selling</a>
+      <a href="chat.html">Chat</a>
+      <a href="dashboard.html" class="guarded">Dashboard</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="card">
+      <h1>Contact Us</h1>
+      <form id="contact-form">
+        <label class="field">
+          <span>Name</span>
+          <input type="text" name="user_name" required/>
+        </label>
+        <label class="field">
+          <span>Email</span>
+          <input type="email" name="user_email" required/>
+        </label>
+        <label class="field">
+          <span>Message</span>
+          <textarea name="message" rows="5" required></textarea>
+        </label>
+        <button class="btn-primary" type="submit">Send</button>
+      </form>
+      <p id="contact-status" class="status"></p>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <a href="terms-of-service.html">Terms of Service</a> •
+    <a href="privacy-policy.html">Privacy Policy</a>
+  </footer>
+
+  <script>
+    const form = document.getElementById("contact-form");
+    const status = document.getElementById("contact-status");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      // Replace with your EmailJS service and template IDs
+      emailjs.sendForm("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", this)
+        .then(() => {
+          status.textContent = "Message sent successfully!";
+          form.reset();
+        }, (err) => {
+          status.textContent = "Failed to send message.";
+          console.error(err);
+        });
+    });
+  </script>
+</body>
+</html>
