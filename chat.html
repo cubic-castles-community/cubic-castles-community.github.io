@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Chat — Cubic Hub</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script defer src="firebase-auth.js"></script>
+  <script defer src="firebase-chat.js"></script>
+  <script defer src="script.js"></script>
+
+  <style>
+    /* Chat-specific layout tweaks that match the site theme */
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .chat-username-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Username input styling (matches site search/inputs) */
+    #chat-username {
+      width: 180px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0E0E12;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    /* Make the message input visually match the username input */
+    #chat-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0E0E12;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    /* Ensure the send button aligns nicely with inputs */
+    .chat-form {
+      display: grid;
+      grid-template-columns: 180px 1fr auto;
+      gap: 8px;
+      margin-top: 10px;
+      align-items: center;
+    }
+
+    /* Mobile adjustments: stack inputs but keep consistent styling */
+    @media (max-width: 640px) {
+      .chat-form { grid-template-columns: 1fr auto; gap: 8px; }
+      #chat-username { width: 100%; order: 1; }
+      #chat-input { order: 0; }
+    }
+
+    /* Small saved badge */
+    #username-saved {
+      font-size: 12px;
+      color: var(--muted);
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">Cubic Hub</div>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="prices.html">Prices</a>
+      <a href="craft.html">Craft</a>
+      <a href="selling.html">Selling</a>
+      <a href="dashboard.html" class="guarded">Dashboard</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <article class="card">
+      <div class="chat-header">
+        <h1 style="margin:0">Community chat</h1>
+        <div style="flex:1"></div>
+        <div class="chat-username-wrap" aria-hidden="true">
+          <span id="username-saved" style="display:none;">Saved</span>
+        </div>
+      </div>
+
+      <div id="chat-messages" class="chat-messages" aria-live="polite" aria-atomic="false"></div>
+
+      <form id="chat-form" class="chat-form" autocomplete="off">
+        <input type="text" id="chat-username" placeholder="In-game username" required aria-label="In-game username"/>
+        <input type="text" id="chat-input" placeholder="Message (press Enter or Send)" required minlength="1" maxlength="500" aria-label="Message"/>
+        <button class="btn-primary" type="submit">Send</button>
+      </form>
+
+      <p class="muted" style="margin-top:12px;">Be kind. Messages are moderated for profanity and abuse. User IDs are recorded for moderation.</p>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <a href="terms-of-service.html">Terms of Service</a> •
+    <a href="privacy-policy.html">Privacy Policy</a>
+  </footer>
+
+  <script>
+    // Cookie helpers (simple, focused on username)
+    function setCookie(name, value, days) {
+      const expires = days ? "; expires=" + new Date(Date.now() + days*864e5).toUTCString() : "";
+      document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/; SameSite=Lax";
+    }
+    function getCookie(name) {
+      return document.cookie.split('; ').reduce((r, v) => {
+        const parts = v.split('=');
+        return parts[0] === name ? decodeURIComponent(parts.slice(1).join('=')) : r;
+      }, '');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const usernameInput = document.getElementById('chat-username');
+      const savedBadge = document.getElementById('username-saved');
+      const chatForm = document.getElementById('chat-form');
+
+      // Prefill username from cookie if present
+      const savedName = getCookie('cc_username');
+      if (savedName) {
+        usernameInput.value = savedName;
+        savedBadge.style.display = '';
+        savedBadge.textContent = 'Saved';
+      }
+
+      // Update cookie as user types (debounced)
+      let debounceTimer = null;
+      usernameInput.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        const val = usernameInput.value.trim();
+        if (!val) {
+          // remove cookie if empty
+          setCookie('cc_username', '', -1);
+          savedBadge.style.display = 'none';
+          return;
+        }
+        debounceTimer = setTimeout(() => {
+          setCookie('cc_username', val, 365); // remember for 1 year
+          savedBadge.style.display = '';
+          savedBadge.textContent = 'Saved';
+          savedBadge.style.opacity = '1';
+          setTimeout(() => { savedBadge.style.opacity = '0.85'; }, 800);
+        }, 400);
+      });
+
+      // Ensure cookie is set on submit (in case user didn't pause)
+      if (chatForm) {
+        chatForm.addEventListener('submit', () => {
+          const val = usernameInput.value.trim();
+          if (val) setCookie('cc_username', val, 365);
+        });
+      }
+
+      // Improve UX: pressing Enter in message input submits; Enter in username focuses message
+      const messageInput = document.getElementById('chat-input');
+      usernameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          messageInput.focus();
+        }
+      });
+
+      // After sending, focus message input (main script handles posting)
+      if (chatForm) {
+        chatForm.addEventListener('submit', () => {
+          setTimeout(() => messageInput.focus(), 50);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
