@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Prices — Cubic Hub</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script defer src="firebase-auth.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">Cubic Hub</div>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="craft.html">Craft</a>
+      <a href="selling.html">Selling</a>
+      <a href="chat.html">Chat</a>
+      <a href="dashboard.html" class="guarded">Dashboard</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Cubic Castles Item Prices</h1>
+    <div class="search-wrapper">
+      <input type="text" id="price-search" placeholder="🔍 Search items..." class="search-bar"/>
+      <button type="button" id="price-clear" class="clear-btn" style="display:none;">&times;</button>
+    </div>
+
+    <ul id="price-list" class="list">
+      <li data-item="Aviator Hat">Aviator Hat — Range: 200–300c</li>
+      <li data-item="Beany">Beany — Range: 25–50c</li>
+      <li data-item="Black Wizard’s Hat">Black Wizard’s Hat — Range: 150–250c</li>
+      <li data-item="Blue Shaman’s Mask">Blue Shaman’s Mask — Range: 500–750c</li>
+      <li data-item="Buckethead">Buckethead — Range: 2000–3000c</li>
+      <li data-item="Cheese Head">Cheese Head — Range: 800–1000c</li>
+      <li data-item="Chef’s Hat">Chef’s Hat — Range: 200–300c</li>
+      <li data-item="Crown">Crown — Range: 50–100c</li>
+      <li data-item="Diving Helmet">Diving Helmet — Range: 3000–4000c</li>
+      <li data-item="Gas Mask">Gas Mask — Range: 4000–6000c</li>
+      <li data-item="Knight’s Helmet">Knight’s Helmet — Range: 500–1000c</li>
+        <li data-item="Cubit Hat">Cubit Hat - Range: 10,000c-17,500c</li>
+    </ul>
+
+    <p id="price-no-results" class="no-results" style="display:none;">No results found.</p>
+  </main>
+
+  <footer class="site-footer">
+    <a href="terms-of-service.html">Terms of Service</a> •
+    <a href="privacy-policy.html">Privacy Policy</a>
+  </footer>
+</body>
+</html>
