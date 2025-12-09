@@ -22,42 +22,38 @@
 
   <main class="container">
     <h1>Crafting Recipes</h1>
+
     <div class="search-wrapper">
       <input type="text" id="craft-search" placeholder="🔍 Search recipes..." class="search-bar"/>
       <button type="button" id="craft-clear" class="clear-btn" style="display:none;">&times;</button>
     </div>
 
-    <section id="craft-list" class="grid">
-      <article class="card" data-item="Stone Block">
-        <h2>Stone Block</h2>
-        <p>Needed: 1 × Stone</p>
-        <p>Station: Workbench</p>
-      </article>
+    <ul id="craft-list" class="list" style="margin:0;">
+      <li data-item="Wooden Crate">
+        <a class="btn-link" href="craft/wooden-crate.html">Wooden Crate</a>
+        <div class="muted">Needed: 8 × Wood Plank, 4 × Nails</div>
+      </li>
 
-      <article class="card" data-item="Clay Brick">
-        <h2>Clay Brick</h2>
-        <p>Needed: 1 × Clay</p>
-        <p>Station: Furnace</p>
-      </article>
+      <li data-item="Energy Wand">
+        <a class="btn-link" href="craft/energy-wand.html">Energy Wand</a>
+        <div class="muted">Needed: Core Crystal, Mana Thread, Gold Ingot, Carved Handle</div>
+      </li>
 
-      <article class="card" data-item="Iron Block">
-        <h2>Iron Block</h2>
-        <p>Needed: 1 × Iron Ore</p>
-        <p>Station: Furnace</p>
-      </article>
+      <li data-item="Stone Block">
+        <a class="btn-link" href="craft/stone-block.html">Stone Block</a>
+        <div class="muted">Needed: 1 × Stone</div>
+      </li>
 
-      <article class="card" data-item="Gold Block">
-        <h2>Gold Block</h2>
-        <p>Needed: 1 × Gold Ore</p>
-        <p>Station: Furnace</p>
-      </article>
+      <li data-item="Clay Brick">
+        <a class="btn-link" href="craft/clay-brick.html">Clay Brick</a>
+        <div class="muted">Needed: 1 × Clay</div>
+      </li>
 
-      <article class="card" data-item="Leather">
-        <h2>Leather</h2>
-        <p>Needed: 1 × Hide</p>
-        <p>Station: Workbench</p>
-      </article>
-    </section>
+      <li data-item="Iron Block">
+        <a class="btn-link" href="craft/iron-block.html">Iron Block</a>
+        <div class="muted">Needed: 1 × Iron Ore</div>
+      </li>
+    </ul>
 
     <p id="craft-no-results" class="no-results" style="display:none;">No results found.</p>
   </main>
