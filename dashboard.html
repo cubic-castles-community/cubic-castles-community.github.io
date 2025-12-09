@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dashboard — Cubic Hub</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script defer src="firebase-auth.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">Cubic Hub</div>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="prices.html">Prices</a>
+      <a href="selling.html">Selling</a>
+      <a href="chat.html">Chat</a>
+      <button id="logout-btn" class="btn-secondary" hidden>Logout</button>
+    </nav>
+  </header>
+
+  <main class="container guarded-only">
+    <article class="card">
+      <h1>Dashboard</h1>
+      <p>You’re logged in. Here’s how to use the site:</p>
+      <ul class="list">
+        <li><strong>Prices:</strong> Find item ranges and search quickly.</li>
+        <li><strong>Craft:</strong> Explore recipes with components and steps.</li>
+        <li><strong>Selling:</strong> Post listings; auto-tags help buyers judge fairness.</li>
+        <li><strong>Chat:</strong> Connect, ask questions, and coordinate trades.</li>
+        <li><strong>Moderation:</strong> Profanity filter and report flags keep the space clean.</li>
+      </ul>
+      <div class="actions">
+        <a class="btn-primary" href="selling.html">Start selling</a>
+        <a class="btn-outline" href="chat.html">Join chat</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <a href="terms-of-service.html">Terms of Service</a> •
+    <a href="privacy-policy.html">Privacy Policy</a>
+  </footer>
+</body>
+</html>
