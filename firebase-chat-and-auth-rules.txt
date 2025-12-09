@@ -1,0 +1,41 @@
+// Use this file as a note to configure in Firebase console (Database -> Rules).
+// Chat rules (Realtime Database):
+{
+  "rules": {
+    "chat": {
+      ".read": true,
+      ".write": "auth != null", // only logged-in users can post
+      "$msgId": {
+        ".validate": "newData.hasChildren(['username','content','uid','createdAt']) &&
+                      newData.child('content').val().length > 0 &&
+                      newData.child('content').val().length <= 500"
+      }
+    },
+    "selling": {
+      ".read": true,
+      ".write": "auth != null",
+      "$listingId": {
+        ".validate": "newData.hasChildren(['item','price','username','tag','uid','createdAt']) &&
+                      newData.child('price').isNumber() &&
+                      newData.child('price').val() > 0"
+      }
+    },
+    "profiles": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "usernames": {
+      "$uname": {
+        ".read": false,
+        ".write": "!data.exists()" // prevent overwriting another user's username mapping
+      }
+    }
+  }
+}
+
+// Auth note:
+// Firebase Authentication stores passwords securely (hashed).
+// IP logging is not implemented client-side for privacy and safety.
+// For moderation, rely on auth.uid, content validation, and admin tooling.
