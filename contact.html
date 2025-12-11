@@ -1,4 +1,3 @@
-<!-- contact.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,13 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Contact — Cubic Hub</title>
   <link rel="stylesheet" href="styles.css" />
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <style>
-    /* small inline styles for status messages */
     .contact-status { margin-top: 12px; font-weight: 600; }
-    .contact-success { color: #4ADEFF; }   /* accent color */
-    .contact-error { color: #FF5F5F; }     /* error color */
+    .contact-success { color: #4ADEFF; }
+    .contact-error { color: #FF5F5F; }
     .contact-loading { color: var(--muted); }
   </style>
 </head>
@@ -48,22 +45,15 @@
   <script>
     // Initialize EmailJS with your public key
     (function(){
-      emailjs.init("kUBZAGfCosCDHAvRT"); // <-- replace with your EmailJS public key
+      emailjs.init("kUBZAGfCosCDHAvRT"); // Public Key
     })();
 
     const form = document.getElementById('contact-form');
     const statusEl = document.getElementById('contact-status');
 
-    // Replace these with your EmailJS IDs
-    const SERVICE_ID = "service_ybtgi4e"; // Service ID for Gmail_Support
-    const OWNER_TEMPLATE_ID = "template_q4t1ip9";  // Template sends to dev account
-    const AUTO_REPLY_TEMPLATE_ID = "template_j9wndwi"; // Template sends to user
-
-    // Optional: map of template params if you prefer to use emailjs.send instead of sendForm
-    // Example template variables used in templates:
-    // - user_name
-    // - user_email
-    // - message
+    // Only one template ID now (owner template)
+    const SERVICE_ID = "service_ybtgi4e"; // Service ID
+    const OWNER_TEMPLATE_ID = "template_q4t1ip9"; // Template ID
 
     function setStatus(text, cls) {
       statusEl.textContent = text;
@@ -73,22 +63,14 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      // Disable form while sending
       const submitBtn = form.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
       setStatus('Sending…', 'contact-loading');
 
-      // First: send the message to the site owner using the owner template
-      // sendForm will read form fields and substitute template variables
+      // Send only one email (to owner)
       emailjs.sendForm(SERVICE_ID, OWNER_TEMPLATE_ID, form)
         .then(() => {
-          // Owner email sent successfully — now send auto-reply to the user
-          // Use the same form so template variables (user_name, user_email, message) are available
-          return emailjs.sendForm(SERVICE_ID, AUTO_REPLY_TEMPLATE_ID, form);
-        })
-        .then(() => {
-          // Both emails sent
-          setStatus('Message sent. A confirmation email has been sent to you.', 'contact-success');
+          setStatus('Message sent successfully!', 'contact-success');
           form.reset();
         })
         .catch((err) => {
