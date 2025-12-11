@@ -1,0 +1,14 @@
+{
+    "editor.quickSuggestions": {
+        "other": "off"
+    },
+    "editor.quickSuggestionsDelay": 100000000,
+    "editor.suggest.selectionMode": "never",
+    "editor.suggestOnTriggerCharacters": false,
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.autoClosingBrackets": "off",
+    "editor.autoClosingQuotes": "off",
+    "editor.autoClosingDelete": "off",
+    "editor.autoSurround": "off"
+}
