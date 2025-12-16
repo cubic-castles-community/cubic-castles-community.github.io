@@ -1,133 +1,131 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Cubic Hub Prices</title>
-  <link rel="icon" href="/favicon.png" type="image/png">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <!-- Header -->
-  <header class="site-header">
-    <div class="brand">Cubic Hub</div>
-    <nav class="nav">
-      <a href="prices.html">Prices</a>
-      <a href="craft.html">Craft</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-  </header>
+<main class="container">
+  <section class="card">
+    <h1>Clothing Prices</h1>
 
-  <!-- Main content -->
-  <main class="container">
-    <section class="card">
-      <h1>Clothing Prices</h1>
+    <!-- Search + Sort controls -->
+    <div class="search-wrapper">
+      <input type="text" id="search" class="search-bar" placeholder="🔍 Search item...">
+      <button class="clear-btn" onclick="document.getElementById('search').value=''; applyFilters();">&times;</button>
+    </div>
 
-      <!-- Search + Sort controls -->
-      <div class="search-wrapper">
-        <input type="text" id="search" class="search-bar" placeholder="🔍 Search item...">
-        <button class="clear-btn" onclick="document.getElementById('search').value=''; applyFilters();">&times;</button>
-      </div>
+    <div class="field">
+      <label for="sort">Sort items:</label>
+      <select id="sort">
+        <option value="none">None</option>
+        <option value="asc">Price: Lowest → Highest</option>
+        <option value="desc">Price: Highest → Lowest</option>
+        <option value="az">Alphabetical: A → Z</option>
+        <option value="za">Alphabetical: Z → A</option>
+      </select>
+    </div>
 
-      <div class="field">
-        <label for="sort">Sort items:</label>
-        <select id="sort">
-          <option value="none">None</option>
-          <option value="asc">Price: Lowest → Highest</option>
-          <option value="desc">Price: Highest → Lowest</option>
-          <option value="az">Alphabetical: A → Z</option>
-          <option value="za">Alphabetical: Z → A</option>
-        </select>
-      </div>
+    <!-- Section content -->
+    <div id="section-content" class="grid"></div>
+    <div class="no-results" id="no-results" style="display:none;">No items found.</div>
 
-      <!-- Prices grid -->
-      <div class="grid" id="prices"></div>
-      <div class="no-results" id="no-results" style="display:none;">No items found.</div>
-    </section>
-  </main>
+    <!-- Pagination buttons -->
+    <div id="pagination" style="margin-top:20px; text-align:center;"></div>
+  </section>
+</main>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <span>&copy; 2025 Cubic Hub</span>
-  </footer>
+<script>
+  let allPrices = [];
+  let groupedSections = {};
+  let currentSection = 1;
 
-  <script>
-    let allPrices = [];
+  async function loadPrices() {
+    const res = await fetch('prices.json');
+    allPrices = await res.json();
 
-    async function loadPrices() {
-      try {
-        const res = await fetch('prices.json');
-        const data = await res.json();
-        allPrices = data;
-        applyFilters();
-      } catch (err) {
-        console.error('Error loading prices:', err);
-        document.getElementById('prices').textContent = 'Failed to load prices.';
-      }
+    // Group by section
+    groupedSections = {};
+    allPrices.forEach(entry => {
+      if (!groupedSections[entry.section]) groupedSections[entry.section] = [];
+      groupedSections[entry.section].push(entry);
+    });
+
+    applyFilters();
+    renderPagination();
+  }
+
+  function renderSection(list) {
+    const container = document.getElementById('section-content');
+    const noResults = document.getElementById('no-results');
+    container.innerHTML = '';
+
+    if (list.length === 0) {
+      noResults.style.display = 'block';
+      return;
+    } else {
+      noResults.style.display = 'none';
     }
 
-    function renderPrices(list) {
-      const container = document.getElementById('prices');
-      const noResults = document.getElementById('no-results');
-      container.innerHTML = '';
+    list.forEach(entry => {
+      const card = document.createElement('article');
+      card.className = 'card item-card';
 
-      if (list.length === 0) {
-        noResults.style.display = 'block';
-        return;
+      const name = document.createElement('div');
+      name.className = 'item-name';
+      name.textContent = entry.item;
+
+      const price = document.createElement('div');
+      price.className = 'item-price';
+
+      if (entry.min && entry.max && entry.min !== entry.max) {
+        price.textContent = `${entry.min.toLocaleString()} - ${entry.max.toLocaleString()}c`;
       } else {
-        noResults.style.display = 'none';
+        price.textContent = `${entry.min.toLocaleString()}c`;
       }
 
-      list.forEach(entry => {
-        const card = document.createElement('article');
-        card.className = 'card item-card';
+      card.appendChild(name);
+      card.appendChild(price);
+      container.appendChild(card);
+    });
+  }
 
-        const name = document.createElement('div');
-        name.className = 'item-name';
-        name.textContent = entry.item;
+  function applyFilters() {
+    const term = document.getElementById('search').value.toLowerCase();
+    const sortOption = document.getElementById('sort').value;
 
-        const price = document.createElement('div');
-        price.className = 'item-price';
+    let filtered = groupedSections[currentSection] || [];
+    filtered = filtered.filter(entry =>
+      entry.item.toLowerCase().includes(term)
+    );
 
-        if (entry.min && entry.max && entry.min !== entry.max) {
-          price.textContent = `${entry.min.toLocaleString()} - ${entry.max.toLocaleString()}c`;
-        } else {
-          price.textContent = `${entry.min.toLocaleString()}c`;
-        }
-
-        card.appendChild(name);
-        card.appendChild(price);
-        container.appendChild(card);
-      });
+    if (sortOption === 'asc') {
+      filtered.sort((a, b) => a.min - b.min);
+    } else if (sortOption === 'desc') {
+      filtered.sort((a, b) => b.max - a.max);
+    } else if (sortOption === 'az') {
+      filtered.sort((a, b) => a.item.localeCompare(b.item));
+    } else if (sortOption === 'za') {
+      filtered.sort((a, b) => b.item.localeCompare(a.item));
     }
 
-    function applyFilters() {
-      const term = document.getElementById('search').value.toLowerCase();
-      const sortOption = document.getElementById('sort').value;
+    renderSection(filtered);
+  }
 
-      // Filter by search term
-      let filtered = allPrices.filter(entry =>
-        entry.item.toLowerCase().includes(term)
-      );
+  function renderPagination() {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
 
-      // Sort
-      if (sortOption === 'asc') {
-        filtered.sort((a, b) => a.min - b.min);
-      } else if (sortOption === 'desc') {
-        filtered.sort((a, b) => b.max - a.max);
-      } else if (sortOption === 'az') {
-        filtered.sort((a, b) => a.item.localeCompare(b.item));
-      } else if (sortOption === 'za') {
-        filtered.sort((a, b) => b.item.localeCompare(a.item));
-      }
+    const sectionNumbers = Object.keys(groupedSections).map(Number).sort((a, b) => a - b);
 
-      renderPrices(filtered);
-    }
+    sectionNumbers.forEach(num => {
+      const btn = document.createElement('button');
+      btn.textContent = `Section ${num}`;
+      btn.className = num === currentSection ? 'btn-primary' : 'btn-secondary';
+      btn.onclick = () => {
+        currentSection = num;
+        applyFilters();
+        renderPagination();
+      };
+      pagination.appendChild(btn);
+    });
+  }
 
-    document.getElementById('search').addEventListener('input', applyFilters);
-    document.getElementById('sort').addEventListener('change', applyFilters);
+  document.getElementById('search').addEventListener('input', applyFilters);
+  document.getElementById('sort').addEventListener('change', applyFilters);
 
-    loadPrices();
-  </script>
-</body>
-</html>
+  loadPrices();
+</script>

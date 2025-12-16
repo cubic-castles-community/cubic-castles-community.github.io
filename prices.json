@@ -1,6 +1,11 @@
 [
-  { "item": "Cupid's Halo", "min": 2150000, "max": 2300000 },
-  { "item": "Cupid's Wings", "min": 200000, "max": 220000 },
-  { "item": "Valentine Wings", "min": 75000, "max": 85000 },
-  { "item": "Heart Wings", "min": 4000, "max": 6500 }
+  { "item": "Cupid's Halo", "min": 2150000, "max": 2300000, "section": 1 },
+  { "item": "Cupid's Wings", "min": 200000, "max": 220000, "section": 1 },
+  { "item": "Valentine Wings", "min": 75000, "max": 85000, "section": 1 },
+  { "item": "Heart Wings", "min": 4000, "max": 6500, "section": 1 },
+
+  { "item": "Angel Wings", "min": 500000, "max": 1000000, "section": 2 },
+  { "item": "Aviator Hat", "min": 200, "max": 300, "section": 2 },
+  { "item": "Top Hat", "min": 280, "max": 320, "section": 2 },
+  { "item": "Scarf", "min": 150, "max": 150, "section": 2 }
 ]
