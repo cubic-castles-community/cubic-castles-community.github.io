@@ -2,55 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Cubic Hub Prices</title>
+  <link rel="icon" href="/favicon.png" type="image/png">
   <link rel="stylesheet" href="styles.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .search-bar {
-      display: block;
-      margin: 0 auto 20px auto;
-      padding: 10px;
-      width: 60%;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-    .prices-container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .price-card {
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 12px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .item-name {
-      font-weight: bold;
-    }
-    .item-price {
-      color: #2a7;
-    }
-  </style>
 </head>
 <body>
-  <h1>Clothing Prices</h1>
-  <input type="text" id="search" class="search-bar" placeholder="🔍 Search item...">
-  <div class="prices-container" id="prices"></div>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="brand">Cubic Hub</div>
+    <nav class="nav">
+      <a href="prices.html">Prices</a>
+      <a href="craft.html">Craft</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Main content -->
+  <main class="container">
+    <section class="card">
+      <h1>Clothing Prices</h1>
+
+      <!-- Search + Sort controls -->
+      <div class="search-wrapper">
+        <input type="text" id="search" class="search-bar" placeholder="🔍 Search item...">
+        <button class="clear-btn" onclick="document.getElementById('search').value=''; applyFilters();">&times;</button>
+      </div>
+
+      <div class="field">
+        <label for="sort">Sort items:</label>
+        <select id="sort">
+          <option value="none">None</option>
+          <option value="asc">Price: Lowest → Highest</option>
+          <option value="desc">Price: Highest → Lowest</option>
+          <option value="az">Alphabetical: A → Z</option>
+          <option value="za">Alphabetical: Z → A</option>
+        </select>
+      </div>
+
+      <!-- Prices grid -->
+      <div class="grid" id="prices"></div>
+      <div class="no-results" id="no-results" style="display:none;">No items found.</div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <span>&copy; 2025 Cubic Hub</span>
+  </footer>
 
   <script>
     let allPrices = [];
@@ -60,7 +59,7 @@
         const res = await fetch('prices.json');
         const data = await res.json();
         allPrices = data;
-        renderPrices(data);
+        applyFilters();
       } catch (err) {
         console.error('Error loading prices:', err);
         document.getElementById('prices').textContent = 'Failed to load prices.';
@@ -69,22 +68,25 @@
 
     function renderPrices(list) {
       const container = document.getElementById('prices');
+      const noResults = document.getElementById('no-results');
       container.innerHTML = '';
 
       if (list.length === 0) {
-        container.textContent = 'No items found.';
+        noResults.style.display = 'block';
         return;
+      } else {
+        noResults.style.display = 'none';
       }
 
       list.forEach(entry => {
-        const card = document.createElement('div');
-        card.className = 'price-card';
+        const card = document.createElement('article');
+        card.className = 'card item-card';
 
-        const name = document.createElement('span');
+        const name = document.createElement('div');
         name.className = 'item-name';
         name.textContent = entry.item;
 
-        const price = document.createElement('span');
+        const price = document.createElement('div');
         price.className = 'item-price';
 
         if (entry.min && entry.max && entry.min !== entry.max) {
@@ -99,13 +101,31 @@
       });
     }
 
-    document.getElementById('search').addEventListener('input', (e) => {
-      const term = e.target.value.toLowerCase();
-      const filtered = allPrices.filter(entry =>
+    function applyFilters() {
+      const term = document.getElementById('search').value.toLowerCase();
+      const sortOption = document.getElementById('sort').value;
+
+      // Filter by search term
+      let filtered = allPrices.filter(entry =>
         entry.item.toLowerCase().includes(term)
       );
+
+      // Sort
+      if (sortOption === 'asc') {
+        filtered.sort((a, b) => a.min - b.min);
+      } else if (sortOption === 'desc') {
+        filtered.sort((a, b) => b.max - a.max);
+      } else if (sortOption === 'az') {
+        filtered.sort((a, b) => a.item.localeCompare(b.item));
+      } else if (sortOption === 'za') {
+        filtered.sort((a, b) => b.item.localeCompare(a.item));
+      }
+
       renderPrices(filtered);
-    });
+    }
+
+    document.getElementById('search').addEventListener('input', applyFilters);
+    document.getElementById('sort').addEventListener('change', applyFilters);
 
     loadPrices();
   </script>
