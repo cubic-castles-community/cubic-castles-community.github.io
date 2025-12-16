@@ -1,0 +1,6 @@
+[
+  { "item": "Cupid's Halo", "min": 2150000, "max": 2300000 },
+  { "item": "Cupid's Wings", "min": 200000, "max": 220000 },
+  { "item": "Valentine Wings", "min": 75000, "max": 85000 },
+  { "item": "Heart Wings", "min": 4000, "max": 6500 }
+]
